@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 
 			const data = await response.json();
-			addMessage(data.message, false);
+			addMessage(data.data.message, false);
 		} catch (error) {
 			console.error("Error:", error);
 			addMessage("Maaf, terjadi kesalahan saat menghubungi chatbot.", false);
