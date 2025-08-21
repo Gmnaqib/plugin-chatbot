@@ -1,0 +1,869 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+.chatbot-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #E4E4E4;
+  font-family: 'Poppins', sans-serif;
+  padding: 10px;
+}
+
+.chatbot-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.chatbot-title {
+  color: #0A62A9;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.chatbot-subtitle {
+  font-size: 10px;
+  font-weight: 400;
+}
+
+#chatbot-area {
+  background: #F9FAFB;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chat-message {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.user-message {
+  background: #0A62A9;
+  color: white;
+  margin-left: auto;
+  border-radius: 8px 8px 0 8px;
+}
+
+.user-message::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 12px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-left-color: #0A62A9;
+  border-right: 0;
+}
+
+.bot-message {
+  background: white;
+  color: #333;
+  border: 1px solid #E4E4E4;
+  margin-right: auto;
+  border-radius: 8px 8px 8px 0;
+}
+
+.bot-message::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 12px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-right-color: #E4E4E4;
+  border-left: 0;
+}
+
+.bot-message::after {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 12px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-right-color: white;
+  border-left: 0;
+}
+
+.reference {
+  font-size: 12px;
+  color: #666;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chatbot-input-wrapper {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #E4E4E4;
+  padding: 8px;
+}
+
+.chatbot-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-attach, .icon-ai {
+  width: 24px;
+  height: 24px;
+  opacity: 0.5;
+}
+
+.chatbot-input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  display: block;
+  width: 100%;
+}
+
+.chatbot-submit {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0A62A9;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.chatbot-submit svg {
+  pointer-events: none;
+}
+
+.chatbot-image {
+  max-width: 30%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.chatbot-cta {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-wrapper {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.icon-wrapper:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(51, 51, 51, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.icon-wrapper:hover::after {
+    opacity: 1;
+    transition-delay: 0.5s;
+}
+
+.chatbot-file {
+  display: inline-flex;
+  position: relative;
+}
+
+.chatbot-file-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  color: #161616;
+  background: #E3F0FF;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.chatbot-file-close {
+  cursor: pointer;
+  position: absolute;
+  top: -8px;
+  right: -5px;
+}
+
+.prompt-sidebar {
+    position: fixed;
+    top: 0;
+    right: -500px;
+    width: 500px;
+    height: 100%;
+    background: white;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    transition: 0.3s ease-in-out;
+    z-index: 9999;
+}
+
+.prompt-sidebar.active {
+    right: 0;
+}
+
+.prompt-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: 0.3s ease-in-out;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+.prompt-sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.sidebar-close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.sidebar-content {
+    padding: 1rem;
+}
+
+.prompt-item {
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.prompt-item:hover {
+    background: #f5f5f5;
+}
+
+.prompt-library {
+  max-width: 424px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.pl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.pl-title {
+  color: #0A62A9;
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.pl-header-icons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pl-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pl-icon.blue {
+  background: #0A62A9;
+}
+
+.pl-icon.red {
+  border: 1px solid #FC5555;
+}
+
+.pl-inner-icon {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.pl-inner-icon.white {
+  background: white;
+}
+
+.pl-inner-icon.red {
+  background: #FC5555;
+}
+
+.pl-tabs {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #E2E2E2;
+}
+
+.pl-tab {
+  color: #5E655D;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.pl-tab.active {
+  color: #0A62A9;
+}
+
+.pl-active-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0px;
+  width: 106px;
+  height: 3px;
+  background: #0A62A9;
+  border-radius: 12px;
+  transition: 0.3s ease;
+}
+
+.pl-search {
+  margin: 1rem 0;
+}
+
+.pl-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: #F4F4F5;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.875rem;
+}
+
+.pl-search-input::placeholder {
+  color: #71717A;
+}
+
+.pl-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.prompt-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #E4E4E4;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.prompt-card:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.prompt-card h3 {
+  color: #031A2E;
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 0 0 0.25rem 0;
+}
+
+.prompt-card p {
+  color: #9DAABF;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .prompt-library {
+    width: 100%;
+    padding: 0.75rem;
+  }
+  
+  .pl-title {
+    font-size: 1.5rem;
+  }
+  
+  .pl-tabs {
+    gap: 0.5rem;
+  }
+  
+  .pl-tab {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+.prompt-library {
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.pl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.pl-title {
+  color: #0A62A9;
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.pl-header-icons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pl-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pl-icon.blue {
+  background: #0A62A9;
+}
+
+.pl-icon.red {
+  border: 1px solid #FC5555;
+}
+
+.pl-inner-icon {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.pl-inner-icon.white {
+  background: white;
+}
+
+.pl-inner-icon.red {
+  background: #FC5555;
+}
+
+.pl-tabs {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #E2E2E2;
+}
+
+.pl-tab {
+  color: #5E655D;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.pl-tab.active {
+  color: #0A62A9;
+}
+
+.pl-active-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0px;
+  width: 106px;
+  height: 3px;
+  background: #0A62A9;
+  border-radius: 12px;
+  transition: 0.3s ease;
+}
+
+.pl-search {
+  margin: 1rem 0;
+}
+
+.pl-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: #F4F4F5;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.875rem;
+}
+
+.pl-search-input::placeholder {
+  color: #71717A;
+}
+
+.pl-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.prompt-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #E4E4E4;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.prompt-card:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.prompt-card h3 {
+  color: #031A2E;
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 0 0 0.25rem 0;
+}
+
+.prompt-card p {
+  color: #9DAABF;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .prompt-library {
+    width: 100%;
+    padding: 0.75rem;
+  }
+  
+  .pl-title {
+    font-size: 1.5rem;
+  }
+  
+  .pl-tabs {
+    gap: 0.5rem;
+  }
+  
+  .pl-tab {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+</style>
+
+<div class="chatbot-container">
+    <div class="chatbot-text-container">
+        <div class="chatbot-title">Welcome to ChatBot</div>
+        <div class="chatbot-subtitle">Get Started a task and chat for your question</div>
+    </div>
+    <div id="chatbot-area">
+        <img src="https://ariqhikari.github.io/proxy/assets/chatbot-limitation.png" class="chatbot-image" />
+    </div>
+    <div class="chatbot-input-wrapper">
+        {{! <div class="chatbot-file">
+          <div class="chatbot-file-icon">
+            <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.5 8.5C11.5 8.63261 11.4473 8.75979 11.3536 8.85355C11.2598 8.94732 11.1326 9 11 9H9.5V10H10.5C10.6326 10 10.7598 10.0527 10.8536 10.1464C10.9473 10.2402 11 10.3674 11 10.5C11 10.6326 10.9473 10.7598 10.8536 10.8536C10.7598 10.9473 10.6326 11 10.5 11H9.5V12C9.5 12.1326 9.44732 12.2598 9.35355 12.3536C9.25979 12.4473 9.13261 12.5 9 12.5C8.86739 12.5 8.74021 12.4473 8.64645 12.3536C8.55268 12.2598 8.5 12.1326 8.5 12V8.5C8.5 8.36739 8.55268 8.24021 8.64645 8.14645C8.74021 8.05268 8.86739 8 9 8H11C11.1326 8 11.2598 8.05268 11.3536 8.14645C11.4473 8.24021 11.5 8.36739 11.5 8.5ZM3.25 9.75C3.25 10.2141 3.06563 10.6592 2.73744 10.9874C2.40925 11.3156 1.96413 11.5 1.5 11.5H1V12C1 12.1326 0.947321 12.2598 0.853553 12.3536C0.759785 12.4473 0.632608 12.5 0.5 12.5C0.367392 12.5 0.240215 12.4473 0.146447 12.3536C0.0526785 12.2598 0 12.1326 0 12V8.5C0 8.36739 0.0526785 8.24021 0.146447 8.14645C0.240215 8.05268 0.367392 8 0.5 8H1.5C1.96413 8 2.40925 8.18437 2.73744 8.51256C3.06563 8.84075 3.25 9.28587 3.25 9.75ZM2.25 9.75C2.25 9.55109 2.17098 9.36032 2.03033 9.21967C1.88968 9.07902 1.69891 9 1.5 9H1V10.5H1.5C1.69891 10.5 1.88968 10.421 2.03033 10.2803C2.17098 10.1397 2.25 9.94891 2.25 9.75ZM7.75 10.25C7.75 10.8467 7.51295 11.419 7.09099 11.841C6.66903 12.2629 6.09674 12.5 5.5 12.5H4.5C4.36739 12.5 4.24021 12.4473 4.14645 12.3536C4.05268 12.2598 4 12.1326 4 12V8.5C4 8.36739 4.05268 8.24021 4.14645 8.14645C4.24021 8.05268 4.36739 8 4.5 8H5.5C6.09674 8 6.66903 8.23705 7.09099 8.65901C7.51295 9.08097 7.75 9.65326 7.75 10.25ZM6.75 10.25C6.75 9.91848 6.6183 9.60054 6.38388 9.36612C6.14946 9.1317 5.83152 9 5.5 9H5V11.5H5.5C5.83152 11.5 6.14946 11.3683 6.38388 11.1339C6.6183 10.8995 6.75 10.5815 6.75 10.25ZM0 6V1.5C0 1.23478 0.105357 0.98043 0.292893 0.792893C0.48043 0.605357 0.734784 0.5 1 0.5H7C7.06568 0.499949 7.13073 0.512838 7.19143 0.537932C7.25212 0.563026 7.30728 0.599833 7.35375 0.64625L10.8538 4.14625C10.9002 4.19272 10.937 4.24788 10.9621 4.30858C10.9872 4.36927 11.0001 4.43432 11 4.5V6C11 6.13261 10.9473 6.25979 10.8536 6.35355C10.7598 6.44732 10.6326 6.5 10.5 6.5C10.3674 6.5 10.2402 6.44732 10.1464 6.35355C10.0527 6.25979 10 6.13261 10 6V5H7C6.86739 5 6.74021 4.94732 6.64645 4.85355C6.55268 4.75979 6.5 4.63261 6.5 4.5V1.5H1V6C1 6.13261 0.947321 6.25979 0.853553 6.35355C0.759785 6.44732 0.632608 6.5 0.5 6.5C0.367392 6.5 0.240215 6.44732 0.146447 6.35355C0.0526785 6.25979 0 6.13261 0 6ZM7.5 4H9.29313L7.5 2.20688V4Z" fill="#66ACFF"/>
+            </svg>
+            Basic Algoritm
+          </div>
+          <svg class="chatbot-file-close" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.45" y="0.45" width="18.6" height="18.6" rx="9.3" fill="#FC5555"/>
+            <rect x="0.45" y="0.45" width="18.6" height="18.6" rx="9.3" stroke="#FC5555" stroke-width="0.4"/>
+            <path d="M12.6621 12.2376C12.69 12.2655 12.7121 12.2986 12.7272 12.335C12.7422 12.3714 12.75 12.4104 12.75 12.4498C12.75 12.4893 12.7422 12.5283 12.7272 12.5647C12.7121 12.6011 12.69 12.6342 12.6621 12.6621C12.6342 12.69 12.6011 12.7121 12.5647 12.7272C12.5283 12.7422 12.4893 12.75 12.4498 12.75C12.4104 12.75 12.3714 12.7422 12.335 12.7272C12.2986 12.7121 12.2655 12.69 12.2376 12.6621L9.75 10.1741L7.26239 12.6621C7.2061 12.7184 7.12975 12.75 7.05015 12.75C6.97055 12.75 6.8942 12.7184 6.83791 12.6621C6.78162 12.6058 6.75 12.5295 6.75 12.4498C6.75 12.3702 6.78162 12.2939 6.83791 12.2376L9.3259 9.75L6.83791 7.26239C6.78162 7.2061 6.75 7.12975 6.75 7.05015C6.75 6.97055 6.78162 6.8942 6.83791 6.83791C6.8942 6.78162 6.97055 6.75 7.05015 6.75C7.12975 6.75 7.2061 6.78162 7.26239 6.83791L9.75 9.3259L12.2376 6.83791C12.2939 6.78162 12.3702 6.75 12.4498 6.75C12.5295 6.75 12.6058 6.78162 12.6621 6.83791C12.7184 6.8942 12.75 6.97055 12.75 7.05015C12.75 7.12975 12.7184 7.2061 12.6621 7.26239L10.1741 9.75L12.6621 12.2376Z" fill="white"/>
+          </svg>
+        </div> }}
+        <input id="chatbot-input" type="text" class="chatbot-input" placeholder="Type question here..." />
+        <div class="chatbot-cta">
+            <div class="chatbot-icons">
+              <span class="icon-wrapper" data-tooltip="Upload Attachment">
+                <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M14.7348 2.98299C13.7361 2.00371 12.1153 2.00371 11.1166 2.98299L3.58547 10.3677C1.86232 12.0574 1.86232 14.7946 3.58547 16.4842C5.30862 18.1739 8.10005 18.1739 9.8232 16.4842L16.0446 10.3838C16.4907 9.94632 17.2193 9.94632 17.6654 10.3838C18.1115 10.8213 18.1115 11.5356 17.6654 11.9731L11.444 18.0735C8.82451 20.6422 4.58416 20.6422 1.96464 18.0735C-0.65488 15.5049 -0.65488 11.347 1.96464 8.77841L9.49576 1.39367C11.3908 -0.464556 14.4606 -0.464556 16.3556 1.39367C18.2507 3.25189 18.2507 6.26198 16.3556 8.1202L9.15195 15.1839C7.98135 16.3317 6.0822 16.3317 4.9116 15.1839C3.741 14.036 3.741 12.1738 4.9116 11.0259L10.8055 5.24658C11.2517 4.80911 11.9802 4.80911 12.4264 5.24658C12.8725 5.68404 12.8725 6.39844 12.4264 6.8359L6.53243 12.6153C6.2582 12.8842 6.2582 13.3256 6.53243 13.5945C6.80666 13.8634 7.25689 13.8634 7.53112 13.5945L14.7348 6.53088C15.7335 5.5516 15.7335 3.96227 14.7348 2.98299Z" fill="#9DAABF"/>
+                </svg>
+              </span>
+              <span class="icon-wrapper" data-tooltip="Prompt Library">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.0833 3.95833C17.0833 4.12409 17.1492 4.28306 17.2664 4.40028C17.3836 4.51749 17.5426 4.58333 17.7083 4.58333C17.8741 4.58333 18.0331 4.51749 18.1503 4.40028C18.2675 4.28306 18.3333 4.12409 18.3333 3.95833V2.91667H19.375C19.5408 2.91667 19.6997 2.85082 19.8169 2.73361C19.9342 2.6164 20 2.45743 20 2.29167C20 2.12591 19.9342 1.96694 19.8169 1.84972C19.6997 1.73251 19.5408 1.66667 19.375 1.66667H18.3333V0.625C18.3333 0.45924 18.2675 0.300268 18.1503 0.183058C18.0331 0.0658479 17.8741 0 17.7083 0C17.5426 0 17.3836 0.0658479 17.2664 0.183058C17.1492 0.300268 17.0833 0.45924 17.0833 0.625V1.66667H16.0417C15.8759 1.66667 15.7169 1.73251 15.5997 1.84972C15.4825 1.96694 15.4167 2.12591 15.4167 2.29167C15.4167 2.45743 15.4825 2.6164 15.5997 2.73361C15.7169 2.85082 15.8759 2.91667 16.0417 2.91667H17.0833V3.95833ZM5.505 1.35C5.64917 0.654167 6.25667 0 7.085 0C7.91333 0 8.52 0.654167 8.66417 1.35C8.81167 2.06 9.1825 3.13167 10.1083 4.05833C11.0342 4.985 12.1067 5.35583 12.8167 5.50333C13.5125 5.64833 14.1667 6.255 14.1667 7.08333C14.1667 7.91167 13.5125 8.51917 12.8167 8.66333C12.1067 8.81083 11.0358 9.18167 10.1083 10.1092C9.1825 11.0358 8.81167 12.1067 8.665 12.8158C8.52 13.5125 7.91333 14.1667 7.08417 14.1667C6.25583 14.1667 5.64917 13.5133 5.50417 12.8167C5.35667 12.1067 4.98583 11.035 4.05917 10.1083C3.1325 9.18 2.06083 8.81 1.35167 8.66333C0.656667 8.51833 0.00333341 7.91333 0.00166674 7.08583C7.78042e-08 6.25667 0.655 5.64833 1.35167 5.50333C2.06167 5.35583 3.1325 4.98583 4.06 4.05833C4.9875 3.13083 5.3575 2.06 5.505 1.35ZM7.91667 16.875V14.85C7.51725 14.9972 7.08604 15.0363 6.66667 14.9633V16.875C6.66667 17.7038 6.99591 18.4987 7.58196 19.0847C8.16801 19.6708 8.96286 20 9.79167 20H16.875C17.7038 20 18.4987 19.6708 19.0847 19.0847C19.6708 18.4987 20 17.7038 20 16.875V9.79167C20 8.96286 19.6708 8.16801 19.0847 7.58196C18.4987 6.99591 17.7038 6.66667 16.875 6.66667H14.9642C15.0369 7.08612 14.9975 7.51733 14.85 7.91667H16.875C17.3723 7.91667 17.8492 8.11421 18.2008 8.46584C18.5525 8.81747 18.75 9.29439 18.75 9.79167V16.875C18.75 17.3723 18.5525 17.8492 18.2008 18.2008C17.8492 18.5525 17.3723 18.75 16.875 18.75H9.79167C9.29439 18.75 8.81747 18.5525 8.46584 18.2008C8.11421 17.8492 7.91667 17.3723 7.91667 16.875ZM0 17.7083C0 17.5426 0.0658479 17.3836 0.183058 17.2664C0.300268 17.1492 0.45924 17.0833 0.625 17.0833H1.66667V16.0417C1.66667 15.8759 1.73251 15.7169 1.84972 15.5997C1.96694 15.4825 2.12591 15.4167 2.29167 15.4167C2.45743 15.4167 2.6164 15.4825 2.73361 15.5997C2.85082 15.7169 2.91667 15.8759 2.91667 16.0417V17.0833H3.95833C4.12409 17.0833 4.28306 17.1492 4.40028 17.2664C4.51749 17.3836 4.58333 17.5426 4.58333 17.7083C4.58333 17.8741 4.51749 18.0331 4.40028 18.1503C4.28306 18.2675 4.12409 18.3333 3.95833 18.3333H2.91667V19.375C2.91667 19.5408 2.85082 19.6997 2.73361 19.8169C2.6164 19.9342 2.45743 20 2.29167 20C2.12591 20 1.96694 19.9342 1.84972 19.8169C1.73251 19.6997 1.66667 19.5408 1.66667 19.375V18.3333H0.625C0.45924 18.3333 0.300268 18.2675 0.183058 18.1503C0.0658479 18.0331 0 17.8741 0 17.7083ZM10 11.875C10 11.7092 10.0658 11.5503 10.1831 11.4331C10.3003 11.3158 10.4592 11.25 10.625 11.25H16.4583C16.6241 11.25 16.7831 11.3158 16.9003 11.4331C17.0175 11.5503 17.0833 11.7092 17.0833 11.875C17.0833 12.0408 17.0175 12.1997 16.9003 12.3169C16.7831 12.4342 16.6241 12.5 16.4583 12.5H10.625C10.4592 12.5 10.3003 12.4342 10.1831 12.3169C10.0658 12.1997 10 12.0408 10 11.875ZM10.625 14.1667C10.4592 14.1667 10.3003 14.2325 10.1831 14.3497C10.0658 14.4669 10 14.6259 10 14.7917C10 14.9574 10.0658 15.1164 10.1831 15.2336C10.3003 15.3508 10.4592 15.4167 10.625 15.4167H14.375C14.5408 15.4167 14.6997 15.3508 14.8169 15.2336C14.9342 15.1164 15 14.9574 15 14.7917C15 14.6259 14.9342 14.4669 14.8169 14.3497C14.6997 14.2325 14.5408 14.1667 14.375 14.1667H10.625Z" fill="#9DAABF"/>
+                </svg>
+              </span>
+            </div>
+            <button id="send-button" class="chatbot-submit">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.7157 1.28516L6.42997 7.57087M12.7157 1.28516L8.71568 12.7137L6.42997 7.57087M12.7157 1.28516L1.28711 5.28516L6.42997 7.57087" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="prompt-sidebar-overlay"></div>
+<div class="prompt-sidebar">
+    <div class="prompt-library">
+      <div class="pl-header">
+        <h2 class="pl-title">Prompt Library</h2>
+        <div class="pl-header-icons">
+          <div class="pl-icon blue">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13.9286 8.57143H8.57143V13.9286C8.57143 14.2127 8.45855 14.4853 8.25761 14.6862C8.05668 14.8871 7.78416 15 7.5 15C7.21584 15 6.94332 14.8871 6.74239 14.6862C6.54145 14.4853 6.42857 14.2127 6.42857 13.9286V8.57143H1.07143C0.787268 8.57143 0.514746 8.45855 0.313814 8.25762C0.112883 8.05668 0 7.78416 0 7.5C0 7.21584 0.112883 6.94332 0.313814 6.74239C0.514746 6.54145 0.787268 6.42857 1.07143 6.42857H6.42857V1.07143C6.42857 0.787268 6.54145 0.514746 6.74239 0.313814C6.94332 0.112882 7.21584 0 7.5 0C7.78416 0 8.05668 0.112882 8.25761 0.313814C8.45855 0.514746 8.57143 0.787268 8.57143 1.07143V6.42857H13.9286C14.2127 6.42857 14.4853 6.54145 14.6862 6.74239C14.8871 6.94332 15 7.21584 15 7.5C15 7.78416 14.8871 8.05668 14.6862 8.25762C14.4853 8.45855 14.2127 8.57143 13.9286 8.57143Z" fill="white"/>
+            </svg>
+          </div>
+          <div class="pl-icon red sidebar-close">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.8242 10.9752C11.8799 11.031 11.9241 11.0971 11.9543 11.17C11.9845 11.2428 12 11.3209 12 11.3997C12 11.4785 11.9845 11.5566 11.9543 11.6294C11.9241 11.7023 11.8799 11.7684 11.8242 11.8242C11.7684 11.8799 11.7023 11.9241 11.6294 11.9543C11.5566 11.9845 11.4785 12 11.3997 12C11.3209 12 11.2428 11.9845 11.17 11.9543C11.0971 11.9241 11.031 11.8799 10.9752 11.8242L6 6.8482L1.02478 11.8242C0.912198 11.9368 0.75951 12 0.6003 12C0.441091 12 0.288402 11.9368 0.175824 11.8242C0.0632457 11.7116 3.1384e-09 11.5589 0 11.3997C-3.1384e-09 11.2405 0.0632457 11.0878 0.175824 10.9752L5.1518 6L0.175824 1.02478C0.0632457 0.912198 -1.1862e-09 0.75951 0 0.6003C1.1862e-09 0.441091 0.0632457 0.288402 0.175824 0.175824C0.288402 0.0632457 0.441091 1.1862e-09 0.6003 0C0.75951 -1.1862e-09 0.912198 0.0632457 1.02478 0.175824L6 5.1518L10.9752 0.175824C11.0878 0.0632457 11.2405 -3.1384e-09 11.3997 0C11.5589 3.1384e-09 11.7116 0.0632457 11.8242 0.175824C11.9368 0.288402 12 0.441091 12 0.6003C12 0.75951 11.9368 0.912198 11.8242 1.02478L6.8482 6L11.8242 10.9752Z" fill="#FC5555"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div class="pl-tabs">
+        <div class="pl-tab active">My Prompt</div>
+        <div class="pl-tab">Public Prompt</div>
+        <div class="pl-active-indicator"></div>
+      </div>
+      
+      <div class="pl-search">
+        <input type="text" placeholder="Search Prompt Library" class="pl-search-input">
+      </div>
+      
+      <div class="pl-content">
+          <div class="prompt-card">
+              <h3>Grammar Corrector</h3>
+              <p>Automatically detect and correct grammar and spelling mistakes in your text.</p>
+          </div>
+          <div class="prompt-card">
+              <h3>Summarize</h3>
+              <p>Generate concise summaries of long texts while retaining key information.</p>
+          </div>
+          <div class="prompt-card">
+              <h3>Code</h3>
+              <p>Assist in writing, debugging, and optimizing code across multiple programming languages.</p>
+          </div>
+      </div>
+    </div>
+</div>
+
+<script>
+// JavaScript untuk mengontrol modal sidebar
+function openSidebar() {
+    document.querySelector('.prompt-sidebar').classList.add('active');
+    document.querySelector('.prompt-sidebar-overlay').classList.add('active');
+}
+
+function closeSidebar() {
+    document.querySelector('.prompt-sidebar').classList.remove('active');
+    document.querySelector('.prompt-sidebar-overlay').classList.remove('active');
+}
+
+document.querySelector('[data-tooltip="Prompt Library"]').addEventListener('click', openSidebar);
+document.querySelector('.sidebar-close').addEventListener('click', closeSidebar);
+document.querySelector('.prompt-sidebar-overlay').addEventListener('click', closeSidebar);
+</script>
+
+<script>
+function addMessage(message, isUser = true) {
+    const chatArea = document.getElementById('chatbot-area');
+    const chatbotImage = document.querySelector('.chatbot-image');
+    
+    // Hide chatbot image if any message is present
+    if (chatbotImage && chatArea.children.length === 1) {
+        chatbotImage.style.display = 'none';
+    }
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = isUser ? 'chat-message user-message' : 'chat-message bot-message';
+
+    chatArea.appendChild(messageDiv);
+    
+    if (!isUser) {
+        // Create a container for the text that will be typed out
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        messageDiv.appendChild(contentDiv);
+        
+        // (Optional) Append your reference content if needed, for example:
+        const referenceDiv = document.createElement('div');
+        referenceDiv.className = 'reference';
+        referenceDiv.innerHTML = `
+        Reference:  <div class="chatbot-file-icon">
+            <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.5 8.5C11.5 8.63261 11.4473 8.75979 11.3536 8.85355C11.2598 8.94732 11.1326 9 11 9H9.5V10H10.5C10.6326 10 10.7598 10.0527 10.8536 10.1464C10.9473 10.2402 11 10.3674 11 10.5C11 10.6326 10.9473 10.7598 10.8536 10.8536C10.7598 10.9473 10.6326 11 10.5 11H9.5V12C9.5 12.1326 9.44732 12.2598 9.35355 12.3536C9.25979 12.4473 9.13261 12.5 9 12.5C8.86739 12.5 8.74021 12.4473 8.64645 12.3536C8.55268 12.2598 8.5 12.1326 8.5 12V8.5C8.5 8.36739 8.55268 8.24021 8.64645 8.14645C8.74021 8.05268 8.86739 8 9 8H11C11.1326 8 11.2598 8.05268 11.3536 8.14645C11.4473 8.24021 11.5 8.36739 11.5 8.5ZM3.25 9.75C3.25 10.2141 3.06563 10.6592 2.73744 10.9874C2.40925 11.3156 1.96413 11.5 1.5 11.5H1V12C1 12.1326 0.947321 12.2598 0.853553 12.3536C0.759785 12.4473 0.632608 12.5 0.5 12.5C0.367392 12.5 0.240215 12.4473 0.146447 12.3536C0.0526785 12.2598 0 12.1326 0 12V8.5C0 8.36739 0.0526785 8.24021 0.146447 8.14645C0.240215 8.05268 0.367392 8 0.5 8H1.5C1.96413 8 2.40925 8.18437 2.73744 8.51256C3.06563 8.84075 3.25 9.28587 3.25 9.75ZM2.25 9.75C2.25 9.55109 2.17098 9.36032 2.03033 9.21967C1.88968 9.07902 1.69891 9 1.5 9H1V10.5H1.5C1.69891 10.5 1.88968 10.421 2.03033 10.2803C2.17098 10.1397 2.25 9.94891 2.25 9.75ZM7.75 10.25C7.75 10.8467 7.51295 11.419 7.09099 11.841C6.66903 12.2629 6.09674 12.5 5.5 12.5H4.5C4.36739 12.5 4.24021 12.4473 4.14645 12.3536C4.05268 12.2598 4 12.1326 4 12V8.5C4 8.36739 4.05268 8.24021 4.14645 8.14645C4.24021 8.05268 4.36739 8 4.5 8H5.5C6.09674 8 6.66903 8.23705 7.09099 8.65901C7.51295 9.08097 7.75 9.65326 7.75 10.25ZM6.75 10.25C6.75 9.91848 6.6183 9.60054 6.38388 9.36612C6.14946 9.1317 5.83152 9 5.5 9H5V11.5H5.5C5.83152 11.5 6.14946 11.3683 6.38388 11.1339C6.6183 10.8995 6.75 10.5815 6.75 10.25ZM0 6V1.5C0 1.23478 0.105357 0.98043 0.292893 0.792893C0.48043 0.605357 0.734784 0.5 1 0.5H7C7.06568 0.499949 7.13073 0.512838 7.19143 0.537932C7.25212 0.563026 7.30728 0.599833 7.35375 0.64625L10.8538 4.14625C10.9002 4.19272 10.937 4.24788 10.9621 4.30858C10.9872 4.36927 11.0001 4.43432 11 4.5V6C11 6.13261 10.9473 6.25979 10.8536 6.35355C10.7598 6.44732 10.6326 6.5 10.5 6.5C10.3674 6.5 10.2402 6.44732 10.1464 6.35355C10.0527 6.25979 10 6.13261 10 6V5H7C6.86739 5 6.74021 4.94732 6.64645 4.85355C6.55268 4.75979 6.5 4.63261 6.5 4.5V1.5H1V6C1 6.13261 0.947321 6.25979 0.853553 6.35355C0.759785 6.44732 0.632608 6.5 0.5 6.5C0.367392 6.5 0.240215 6.44732 0.146447 6.35355C0.0526785 6.25979 0 6.13261 0 6ZM7.5 4H9.29313L7.5 2.20688V4Z" fill="#66ACFF"/>
+            </svg>
+            Basic Algoritm
+        `;
+        messageDiv.appendChild(referenceDiv);
+        
+        // Typewriter effect: reveal message letter by letter
+        let index = 0;
+        function typeWriter() {
+            if (index < message.length) {
+                contentDiv.innerHTML += message.charAt(index);
+                index++;
+                setTimeout(typeWriter, 50); // adjust speed (50ms delay per letter)
+            }
+        }
+        typeWriter();
+    } else {
+        // User messages are shown immediately
+        messageDiv.textContent = message;
+    }
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+
+// Simulasi respon bot sederhana
+function getBotResponse(userMessage) {
+    const responses = {
+        'hi': 'Hello! How can I help you today?',
+        'help': 'I can help with:\n1. Basic Algorithms\n2. Grammar Correction\n3. Code Examples',
+        'bye': 'Goodbye! Have a nice day!',
+        'default': 'I understand. Could you please elaborate more?'
+    };
+
+    const lowerMsg = userMessage.toLowerCase();
+    return responses[lowerMsg] || responses['default'];
+}
+
+// Handle pengiriman pesan
+function handleSendMessage() {
+    const inputField = document.getElementById('chatbot-input');
+    const message = inputField.value.trim();
+    
+    if(!message) return;
+    
+    // Tambahkan pesan user
+    addMessage(message, true);
+    
+    // Kosongkan input
+    inputField.value = '';
+    
+    // Simulasi delay respon bot
+    setTimeout(() => {
+        const botResponse = getBotResponse(message);
+        addMessage(botResponse, false);
+    }, 1000);
+}
+
+// Event Listeners
+document.getElementById('send-button').addEventListener('click', handleSendMessage);
+document.getElementById('chatbot-input').addEventListener('keypress', (e) => {
+    // if(e.key === 'Enter') handleSendMessage();
+    if(e.key === 'Enter') {
+        addMessage('Explain, what is Algorithm?', true);
+        // clear input
+        document.getElementById('chatbot-input').value = '';
+        setTimeout(() => {
+            addMessage('An algorithm is a step-by-step procedure or formula for solving a problem. It provides a systematic approach to processing data and performing calculations.', false);
+        }, 1500);
+    }
+});
+
+// Animasi fadeIn
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+`;
+document.head.appendChild(style);
+
+function createFileElement(title) {
+    const fileDiv = document.createElement('div');
+    fileDiv.className = 'chatbot-file';
+    fileDiv.innerHTML = `
+        <div class="chatbot-file-icon">
+            <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.8125 3.46875C12.8125 3.59307 12.8619 3.7123 12.9498 3.80021C13.0377 3.88811 13.1569 3.9375 13.2812 3.9375C13.4056 3.9375 13.5248 3.88811 13.6127 3.80021C13.7006 3.7123 13.75 3.59307 13.75 3.46875V2.6875H14.5312C14.6556 2.6875 14.7748 2.63811 14.8627 2.55021C14.9506 2.4623 15 2.34307 15 2.21875C15 2.09443 14.9506 1.9752 14.8627 1.88729C14.7748 1.79939 14.6556 1.75 14.5312 1.75H13.75V0.96875C13.75 0.84443 13.7006 0.725201 13.6127 0.637294C13.5248 0.549386 13.4056 0.5 13.2812 0.5C13.1569 0.5 13.0377 0.549386 12.9498 0.637294C12.8619 0.725201 12.8125 0.84443 12.8125 0.96875V1.75H12.0312C11.9069 1.75 11.7877 1.79939 11.6998 1.88729C11.6119 1.9752 11.5625 2.09443 11.5625 2.21875C11.5625 2.34307 11.6119 2.4623 11.6998 2.55021C11.7877 2.63811 11.9069 2.6875 12.0312 2.6875H12.8125V3.46875ZM4.12875 1.5125C4.23688 0.990625 4.6925 0.5 5.31375 0.5C5.935 0.5 6.39 0.990625 6.49813 1.5125C6.60875 2.045 6.88688 2.84875 7.58125 3.54375C8.27563 4.23875 9.08 4.51688 9.6125 4.6275C10.1344 4.73625 10.625 5.19125 10.625 5.8125C10.625 6.43375 10.1344 6.88937 9.6125 6.9975C9.08 7.10812 8.27688 7.38625 7.58125 8.08187C6.88688 8.77687 6.60875 9.58 6.49875 10.1119C6.39 10.6344 5.935 11.125 5.31313 11.125C4.69188 11.125 4.23687 10.635 4.12812 10.1125C4.0175 9.58 3.73937 8.77625 3.04437 8.08125C2.34937 7.385 1.54562 7.1075 1.01375 6.9975C0.4925 6.88875 0.00250006 6.435 0.00125006 5.81437C5.83532e-08 5.1925 0.49125 4.73625 1.01375 4.6275C1.54625 4.51688 2.34938 4.23937 3.045 3.54375C3.74063 2.84812 4.01813 2.045 4.12875 1.5125ZM5.9375 13.1562V11.6375C5.63794 11.7479 5.31453 11.7772 5 11.7225V13.1562C5 13.7779 5.24693 14.374 5.68647 14.8135C6.12601 15.2531 6.72215 15.5 7.34375 15.5H12.6562C13.2779 15.5 13.874 15.2531 14.3135 14.8135C14.7531 14.374 15 13.7779 15 13.1562V7.84375C15 7.22215 14.7531 6.62601 14.3135 6.18647C13.874 5.74693 13.2779 5.5 12.6562 5.5H11.2231C11.2777 5.81459 11.2481 6.138 11.1375 6.4375H12.6562C13.0292 6.4375 13.3869 6.58566 13.6506 6.84938C13.9143 7.1131 14.0625 7.47079 14.0625 7.84375V13.1562C14.0625 13.5292 13.9143 13.8869 13.6506 14.1506C13.3869 14.4143 13.0292 14.5625 12.6562 14.5625H7.34375C6.97079 14.5625 6.6131 14.4143 6.34938 14.1506C6.08566 13.8869 5.9375 13.5292 5.9375 13.1562ZM0 13.7812C0 13.6569 0.049386 13.5377 0.137294 13.4498C0.225201 13.3619 0.34443 13.3125 0.46875 13.3125H1.25V12.5312C1.25 12.4069 1.29939 12.2877 1.38729 12.1998C1.4752 12.1119 1.59443 12.0625 1.71875 12.0625C1.84307 12.0625 1.9623 12.1119 2.05021 12.1998C2.13811 12.2877 2.1875 12.4069 2.1875 12.5312V13.3125H2.96875C3.09307 13.3125 3.2123 13.3619 3.30021 13.4498C3.38811 13.5377 3.4375 13.6569 3.4375 13.7812C3.4375 13.9056 3.38811 14.0248 3.30021 14.1127C3.2123 14.2006 3.09307 14.25 2.96875 14.25H2.1875V15.0312C2.1875 15.1556 2.13811 15.2748 2.05021 15.3627C1.9623 15.4506 1.84307 15.5 1.71875 15.5C1.59443 15.5 1.4752 15.4506 1.38729 15.3627C1.29939 15.2748 1.25 15.1556 1.25 15.0312V14.25H0.46875C0.34443 14.25 0.225201 14.2006 0.137294 14.1127C0.049386 14.0248 0 13.9056 0 13.7812ZM7.5 9.40625C7.5 9.28193 7.54939 9.1627 7.63729 9.07479C7.7252 8.98689 7.84443 8.9375 7.96875 8.9375H12.3438C12.4681 8.9375 12.5873 8.98689 12.6752 9.07479C12.7631 9.1627 12.8125 9.28193 12.8125 9.40625C12.8125 9.53057 12.7631 9.6498 12.6752 9.73771C12.5873 9.82561 12.4681 9.875 12.3438 9.875H7.96875C7.84443 9.875 7.7252 9.82561 7.63729 9.73771C7.54939 9.6498 7.5 9.53057 7.5 9.40625ZM7.96875 11.125C7.84443 11.125 7.7252 11.1744 7.63729 11.2623C7.54939 11.3502 7.5 11.4694 7.5 11.5938C7.5 11.7181 7.54939 11.8373 7.63729 11.9252C7.7252 12.0131 7.84443 12.0625 7.96875 12.0625H10.7812C10.9056 12.0625 11.0248 12.0131 11.1127 11.9252C11.2006 11.8373 11.25 11.7181 11.25 11.5938C11.25 11.4694 11.2006 11.3502 11.1127 11.2623C11.0248 11.1744 10.9056 11.125 10.7812 11.125H7.96875Z" fill="#66ACFF"/>
+            </svg>
+            ${title}
+        </div>
+        <svg class="chatbot-file-close" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.45" y="0.45" width="18.6" height="18.6" rx="9.3" fill="#FC5555"/>
+            <rect x="0.45" y="0.45" width="18.6" height="18.6" rx="9.3" stroke="#FC5555" stroke-width="0.4"/>
+            <path d="M12.6621 12.2376C12.69 12.2655 12.7121 12.2986 12.7272 12.335C12.7422 12.3714 12.75 12.4104 12.75 12.4498C12.75 12.4893 12.7422 12.5283 12.7272 12.5647C12.7121 12.6011 12.69 12.6342 12.6621 12.6621C12.6342 12.69 12.6011 12.7121 12.5647 12.7272C12.5283 12.7422 12.4893 12.75 12.4498 12.75C12.4104 12.75 12.3714 12.7422 12.335 12.7272C12.2986 12.7121 12.2655 12.69 12.2376 12.6621L9.75 10.1741L7.26239 12.6621C7.2061 12.7184 7.12975 12.75 7.05015 12.75C6.97055 12.75 6.8942 12.7184 6.83791 12.6621C6.78162 12.6058 6.75 12.5295 6.75 12.4498C6.75 12.3702 6.78162 12.2939 6.83791 12.2376L9.3259 9.75L6.83791 7.26239C6.78162 7.2061 6.75 7.12975 6.75 7.05015C6.75 6.97055 6.78162 6.8942 6.83791 6.83791C6.8942 6.78162 6.97055 6.75 7.05015 6.75C7.12975 6.75 7.2061 6.78162 7.26239 6.83791L9.75 9.3259L12.2376 6.83791C12.2939 6.78162 12.3702 6.75 12.4498 6.75C12.5295 6.75 12.6058 6.78162 12.6621 6.83791C12.7184 6.8942 12.75 6.97055 12.75 7.05015C12.75 7.12975 12.7184 7.2061 12.6621 7.26239L10.1741 9.75L12.6621 12.2376Z" fill="white"/>
+        </svg>
+    `;
+    
+    // Tambahkan event listener untuk tombol close
+    fileDiv.querySelector('.chatbot-file-close').addEventListener('click', () => {
+        fileDiv.remove();
+    });
+    
+    return fileDiv;
+}
+
+// Update event listener untuk prompt card
+document.querySelectorAll('.prompt-card').forEach(card => {
+    card.addEventListener('click', () => {
+        const title = card.querySelector('h3').textContent;
+        const inputWrapper = document.querySelector('.chatbot-input-wrapper');
+        const inputField = document.getElementById('chatbot-input');
+        
+        // Masukkan file element sebelum input field
+        inputWrapper.insertBefore(createFileElement(title), inputField);
+        
+        closeSidebar(); // Tutup sidebar setelah memilih
+    });
+});
+</script>
