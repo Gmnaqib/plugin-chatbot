@@ -1,52 +1,64 @@
-
 document.addEventListener("DOMContentLoaded", function () {
-	const chatInput = document.getElementById("chat-input");
-	const chatArea = document.getElementById("chat-area");
+	const chatInput = document.getElementById("chatbot-input");
+	const chatArea = document.getElementById("chatbot-area");
 	const sendButton = document.getElementById("send-button");
 
-	sendButton.addEventListener("click", function () {
-		let messages = [];
-		console.log((new URLSearchParams(window.location.search)).get('id'));
+	const chatbotImage = document.querySelector('.chatbot-image');
+	if (chatbotImage) {
+		chatbotImage.style.display = 'block';
+	}
 
-		const message = chatInput.value.trim();
-		if (message) {
-			const newMessage = document.createElement("div");
-			newMessage.textContent = `You: ${message} 1`;
-			messages.push({"role":"user","content":message})
-			chatArea.appendChild(newMessage);
-			chatInput.value = "";
-			chatArea.scrollTop = chatArea.scrollHeight;
+	function addMessage(message, isUser = true) {
+		// Hide chatbot image if any message is present
+		if (chatbotImage && chatArea.children.length === 1) {
+			chatbotImage.style.display = 'none';
+		}
+		const messageDiv = document.createElement("div");
+		messageDiv.className = isUser ? "chat-message user-message" : "chat-message bot-message";
+		messageDiv.textContent = message;
+		chatArea.appendChild(messageDiv);
+		chatArea.scrollTop = chatArea.scrollHeight;
+	}
 
-			// Send message to server
-			fetch("http://localhost:5000/chat", {
+	async function sendMessage(message) {
+		addMessage(message, true);
+		chatInput.value = "";
+
+		try {
+			const response = await fetch("https://www.gumilarmn.site/api/chatbot/chat", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-				},x
-				body: JSON.stringify({
-					prompt: message,
-					course_id: +(new URLSearchParams(
-						window.location.search
-					).get("id")),
-					threshold: 0.4,
-					limit: 5,
-					messages: messages,
-				}),
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					const newMessage = document.createElement("div");
-					newMessage.textContent = `answer: ${data.message}`;
-					chatArea.appendChild(newMessage);
-					messages.push({
-						role: "assistant",
-						content: data.message,
-					});
-					chatArea.scrollTop = chatArea.scrollHeight;
-				})
-				.catch((error) => {
-					console.error("Error:", error);
-				});
+					"x-api-key": "5680698aa667911182afce7ff2517d9afdd33511059e90f70521f4fa40689bff"
+				},
+				body: JSON.stringify({ prompt: message }),
+			});
+
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+
+			const data = await response.json();
+			addMessage(data.message, false);
+		} catch (error) {
+			console.error("Error:", error);
+			addMessage("Maaf, terjadi kesalahan saat menghubungi chatbot.", false);
+		}
+	}
+
+	sendButton.addEventListener("click", function () {
+		const message = chatInput.value.trim();
+		if (message) {
+			sendMessage(message);
+		}
+	});
+
+	chatInput.addEventListener("keypress", function (e) {
+		if (e.key === "Enter") {
+			const message = chatInput.value.trim();
+			if (message) {
+				sendMessage(message);
+			}
 		}
 	});
 });
