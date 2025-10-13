@@ -31,7 +31,12 @@ document.addEventListener("DOMContentLoaded", function () {
 					"Content-Type": "application/json",
 					"x-api-key": "5680698aa667911182afce7ff2517d9afdd33511059e90f70521f4fa40689bff"
 				},
-				body: JSON.stringify({ prompt: message }),
+				body: JSON.stringify({
+					prompt: message,
+					threshold: 0.4,
+					limit: 5,
+					course_id: "3"
+				}),
 			});
 
 			if (!response.ok) {
