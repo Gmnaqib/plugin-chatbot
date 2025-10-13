@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function addMessage(message, isUser = true) {
+
 		// Hide chatbot image if any message is present
 		if (chatbotImage && chatArea.children.length === 1) {
 			chatbotImage.style.display = 'none';
