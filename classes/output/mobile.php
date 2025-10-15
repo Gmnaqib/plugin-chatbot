@@ -21,6 +21,17 @@ class mobile extends external_api
     {
         global $OUTPUT;
 
+        // Mendefinisikan path ke script.js
+        // Lokasi relatif: classes/output/mobile.php adalah di blocks/chatbot/classes/output/
+        // script.js berada di blocks/chatbot/
+        $jsfile = __DIR__ . '/../../script.js';
+        $jscontent = '';
+
+        if (file_exists($jsfile)) {
+            // Membaca konten script.js untuk diinjeksikan ke Moodle App
+            $jscontent = file_get_contents($jsfile);
+        }
+
         $data = [
             'title' => 'Welcome to the Moodle Chatbot (Mobile)!',
         ];
@@ -35,7 +46,8 @@ class mobile extends external_api
                     'html' => $html,
                 ],
             ],
-            'javascript' => '',
+            // Masukkan konten JavaScript yang telah dibaca di sini
+            'javascript' => $jscontent,
             'otherdata' => $data
         ];
     }
