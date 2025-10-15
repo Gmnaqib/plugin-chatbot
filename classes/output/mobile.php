@@ -5,16 +5,23 @@ namespace block_chatbot\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_external\external_function_parameters;
-// Hapus use external_value; dan external_api; untuk menghindari konflik
+// Menghapus semua baris 'use core_external\' untuk kelas Web Service
+// dan mengandalkan Full Namespace di bawah untuk menghindari konflik.
 
-class mobile extends \core_external\external_api // Menggunakan Full Namespace untuk kelas induk
+use context_block;
+use context_course;
+use context_system;
+use block_chatbot\block_chatbot;
+
+// Menggunakan Full Namespace untuk kelas induk dan memastikan dependensi terload
+class mobile extends \core_external\external_api
 {
     /**
      * Mendefinisikan parameter input Web Service (wajib ada courseid).
      */
     public static function mobile_view_parameters()
     {
+        // Panggilan kelas Web Service harus menggunakan backslash (\)
         return new \external_function_parameters([
             // Menggunakan backslash (\) untuk mengakses kelas dan konstanta global
             new \external_value(\external_value::TYPE_INT, 'The course id for the context.', \VALUE_DEFAULT, 0)
@@ -26,7 +33,7 @@ class mobile extends \core_external\external_api // Menggunakan Full Namespace u
      */
     public static function mobile_view_returns()
     {
-        // Menggunakan backslash (\) untuk mengakses kelas dan konstanta global
+        // Panggilan kelas Web Service harus menggunakan backslash (\)
         return new \external_single_structure([
             'templates' => new \external_multiple_structure(
                 new \external_single_structure([
@@ -63,7 +70,6 @@ class mobile extends \core_external\external_api // Menggunakan Full Namespace u
         require_capability('moodle/block:view', $context);
 
         // --- 2. MUAT FUNGSI CHAT (JavaScript) ---
-        // Menggunakan $CFG->dirroot untuk mendapatkan path absolut
         $jsfile = $CFG->dirroot . '/blocks/chatbot/script.js';
         $jscontent = '';
 
