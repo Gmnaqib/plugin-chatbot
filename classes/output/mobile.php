@@ -7,19 +7,25 @@ defined('MOODLE_INTERNAL') || die();
 use external_api;
 use core_external\external_function_parameters;
 use core_external\external_value;
-use context_block; // Wajib diimpor untuk mendapatkan konteks blok
-use block_chatbot\block_chatbot; // Impor kelas utama blok
+use context_block;
+use context_course; // <--- BARU: Diperlukan untuk konteks kursus
+use context_system; // <--- BARU: Diperlukan untuk konteks My Home/Sistem
+use block_chatbot\block_chatbot;
 
 class mobile extends external_api
 {
     /**
-     * Mengembalikan parameter eksternal untuk mobile_view
+     * Mengembalikan parameter eksternal untuk mobile_view.
+     * Harus mendeklarasikan parameter courseid yang dikirim oleh Moodle App.
      *
      * @return external_function_parameters
      */
     public static function mobile_view_parameters()
     {
-        return new external_function_parameters([]);
+        return new external_function_parameters([
+            // Wajib mendefinisikan courseid (ID kursus), 0 untuk konteks sistem/My Home
+            new external_value(external_value::TYPE_INT, 'The course id for the context.', VALUE_DEFAULT, 0)
+        ]);
     }
 
     /**
@@ -39,22 +45,27 @@ class mobile extends external_api
     /**
      * Mengembalikan konten blok untuk Moodle Mobile App
      *
+     * @param int $courseid ID kursus (0 untuk konteks sistem/My home).
      * @return array
      */
-    public static function mobile_view()
+    public static function mobile_view($courseid = 0)
     {
         global $OUTPUT;
 
-        // --- 1. PEMERIKSAAN KAPABILITAS (Wajib) ---
-        // Mendapatkan konteks sistem (karena blok dapat berada di mana saja).
-        $context = context_block::instance(0);
+        // Validasi dan pemeriksaan kapabilitas dengan konteks yang benar.
+        self::validate_parameters(self::mobile_view_parameters(), ['courseid' => $courseid]);
+        
+        // Tentukan konteks: kursus atau sistem
+        if ($courseid > 0) {
+            $context = context_course::instance($courseid, MUST_EXIST);
+        } else {
+            // Untuk My home/Dasbor (Sistem)
+            $context = context_system::instance();
+        }
 
-        // Pemeriksaan izin untuk melihat blok. 
-        // Anda harus menggunakan kapabilitas yang benar dari db/access.php.
-        // Jika db/access.php Anda mendefinisikan 'block/chatbot:view', gunakan itu.
+        // Pemeriksaan izin: pengguna harus bisa melihat blok di konteks ini.
         require_capability('moodle/block:view', $context);
-        // Jika blok Anda memiliki kapabilitas khusus, ganti 'moodle/block:view' dengan 'block/chatbot:view'
-
+        
         // --- 2. MUAT FUNGSI CHAT (JavaScript) ---
         $jsfile = __DIR__ . '/../../script.js';
         $jscontent = '';
