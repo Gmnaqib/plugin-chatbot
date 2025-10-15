@@ -1,6 +1,5 @@
 <?php
-
-defined('MOODLE_INTERNAL') || die();
+// blocks/chatbot/db/access.php
 
 $capabilities = array(
   'block/chatbot:addinstance' => array(
@@ -16,7 +15,7 @@ $capabilities = array(
     'captype' => 'write',
     'contextlevel' => CONTEXT_SYSTEM,
     'archetypes' => array(
-      'user' => CAP_ALLOW
+      'user' => CAP_ALLOW // Izinkan pengguna untuk menambahkan ke Dashboard/My Home
     ),
     'clonepermissionsfrom' => 'moodle/my:manageblocks'
   ),

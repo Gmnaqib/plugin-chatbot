@@ -1,4 +1,5 @@
 <?php
+// blocks/chatbot/db/services.php
 
 defined('MOODLE_INTERNAL') || die();
 
