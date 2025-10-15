@@ -5,11 +5,12 @@ namespace block_chatbot\output;
 defined('MOODLE_INTERNAL') || die();
 
 use external_api;
+use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_value;
 use context_block;
-use context_course; // <--- BARU: Diperlukan untuk konteks kursus
-use context_system; // <--- BARU: Diperlukan untuk konteks My Home/Sistem
+use context_course;
+use context_system;
 use block_chatbot\block_chatbot;
 
 class mobile extends external_api
@@ -54,7 +55,7 @@ class mobile extends external_api
 
         // Validasi dan pemeriksaan kapabilitas dengan konteks yang benar.
         self::validate_parameters(self::mobile_view_parameters(), ['courseid' => $courseid]);
-        
+
         // Tentukan konteks: kursus atau sistem
         if ($courseid > 0) {
             $context = context_course::instance($courseid, MUST_EXIST);
@@ -65,7 +66,7 @@ class mobile extends external_api
 
         // Pemeriksaan izin: pengguna harus bisa melihat blok di konteks ini.
         require_capability('moodle/block:view', $context);
-        
+
         // --- 2. MUAT FUNGSI CHAT (JavaScript) ---
         $jsfile = __DIR__ . '/../../script.js';
         $jscontent = '';
