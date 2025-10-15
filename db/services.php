@@ -1,11 +1,14 @@
 <?php
+
+defined('MOODLE_INTERNAL') || die();
+
 $functions = [
-    'block_chatbot_mobile_view' => [ // Nama fungsi Web Service
+    'block_chatbot_mobile_view' => [
         'classname' => 'block_chatbot\output\mobile',
         'methodname' => 'mobile_view',
-        'classpath' => 'block/chatbot/classes/output/mobile.php', // Path ke file implementasi
         'description' => 'Returns the content of the chatbot block for mobile.',
         'type' => 'read',
         'ajax' => true,
+        'capabilities' => 'moodle/block:view',
     ],
 ];
