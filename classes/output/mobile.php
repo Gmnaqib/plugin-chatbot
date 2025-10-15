@@ -4,11 +4,45 @@ namespace block_chatbot\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
+
 /**
  * Class mobile untuk mendukung Moodle Mobile App
  */
-class mobile
+class mobile extends \external_api
 {
+    /**
+     * Parameters definition for mobile_view function
+     *
+     * @return \external_function_parameters
+     */
+    public static function mobile_view_parameters()
+    {
+        return new \external_function_parameters([
+            'courseid' => new \external_value(PARAM_INT, 'The course id for the context.', VALUE_DEFAULT, 0)
+        ]);
+    }
+
+    /**
+     * Returns definition for mobile_view function
+     *
+     * @return \external_single_structure
+     */
+    public static function mobile_view_returns()
+    {
+        return new \external_single_structure([
+            'templates' => new \external_multiple_structure(
+                new \external_single_structure([
+                    'id' => new \external_value(PARAM_TEXT, 'Template id'),
+                    'html' => new \external_value(PARAM_RAW, 'Template HTML')
+                ]),
+                'Block templates'
+            ),
+            'javascript' => new \external_value(PARAM_RAW, 'Javascript to run', VALUE_OPTIONAL, ''),
+            'otherdata' => new \external_value(PARAM_RAW, 'Other data', VALUE_OPTIONAL, '{}')
+        ]);
+    }
     /**
      * Mengembalikan konten blok untuk Moodle Mobile App
      *
@@ -19,9 +53,9 @@ class mobile
     {
         global $OUTPUT, $CFG, $USER;
 
-        // --- 1. BASIC SECURITY AND CONTEXT ---
-        // Basic parameter validation
-        $courseid = (int) $courseid;
+        // Validate parameters
+        $params = self::validate_parameters(self::mobile_view_parameters(), ['courseid' => $courseid]);
+        $courseid = $params['courseid'];
 
         // Basic security - user must be logged in
         if (!$USER || !$USER->id) {
