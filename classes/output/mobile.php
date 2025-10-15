@@ -5,7 +5,6 @@ namespace block_chatbot\output;
 defined('MOODLE_INTERNAL') || die();
 
 use external_api;
-use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_value;
 use context_block;
@@ -13,7 +12,7 @@ use context_course;
 use context_system;
 use block_chatbot\block_chatbot;
 
-class mobile extends external_api
+class mobile extends \core_external\external_api
 {
     /**
      * Mengembalikan parameter eksternal untuk mobile_view.
